@@ -29,7 +29,6 @@ def train(images_folder="images/"):
         fc_layer_1,
         prediction_layer
     ])
-    print(model.summary())
     model_ckpt = ModelCheckpoint("model.h5",
                     save_best_only=True,
                     monitor="val_accuracy",
@@ -60,9 +59,6 @@ def load_model(model_file):
         fc_layer_1,
         prediction_layer
     ])
-
-    print(model.summary())
-
     model.compile(optimizer=tf.keras.optimizers.Adam(),
                   loss=tf.keras.losses.categorical_crossentropy,
                   metrics=["accuracy"])
@@ -74,9 +70,6 @@ def load_model(model_file):
 def infer(model, file_path):
     img = Image.open(file_path)
     img = img.resize((224, 224))
-
-    print(np.array(img).shape)
-
     img = np.array(img)
 
     prediction = model.predict(img.reshape((1, 224, 224, 3)).astype("float32"))
@@ -92,14 +85,15 @@ def infer(model, file_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--download-videos",
-                        help="By setting this flag we can download videos from youtube",
+                        help="Use this flag to download videos from youtube. The destination path must be provided with the --videos-path argument",
                         action="store_true",
                         default=False)
     parser.add_argument("--videos-path",
-                        help="Path of the videos folder where the videos need to be downloaded",
+                        help="Path of the videos folder where the videos will be downloaded",
                         type=str,
                         default="videos/")
     parser.add_argument("--build-image-data",
+                        help="Build the image dataset once the videos are downloaded.",
                         action="store_true",
                         default=False)
     parser.add_argument("--images-path",
