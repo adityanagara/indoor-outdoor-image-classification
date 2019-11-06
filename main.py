@@ -122,7 +122,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.download_videos:
         log(INFO, "Downloading videos")
-        download_data.download_all_videos(args.videos_path)
+        all_video_names = download_data.get_all_video_names()
+        download_data.download_all_videos(args.videos_path, all_video_names)
     if args.build_image_data:
         log(INFO, "Extracting image frames from videos")
         download_data.get_all_images(args.videos_path, args.images_path)

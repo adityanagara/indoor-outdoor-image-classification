@@ -64,26 +64,26 @@ def process_path(file_path, return_image_names=False):
 
 
 def tf_dataset(images_folder, return_image_name=False):
+    """This function builds a tensorflow training and test dataset object
+    Args:
+        image_folder (str) : The input image folder with all images
+        return_image_name (bool) : To return the file name as part of the
+        generator object
+    """
     all_files = list(map(lambda x: os.path.join(images_folder, x), os.listdir(images_folder)))
     random.shuffle(all_files)
     num_images = len(all_files)
     train_files = all_files[:int(num_images * 0.8)]
     test_files = all_files[int(num_images * 0.8):]
 
-    log(INFO, "Total number of training images {}".format(len(train_files)))
-    log(INFO, "Total number of test images {}".format(len(test_files)))
-    #print(all_files)
+    print("Total number of training images {}".format(len(train_files)))
+    print("Total number of test images {}".format(len(test_files)))
     train_ds = tf.data.Dataset.list_files(train_files)# "{}*.png".format(images_folder)
     test_ds = tf.data.Dataset.list_files(test_files)
-    for f in train_ds.take(5):
-        print(f.numpy())
-
-    for f in test_ds.take(5):
-        print(f.numpy())
-    train_ds = train_ds.map(process_path, num_parallel_calls=AUTOTUNE)
+    train_ds = train_ds.map(lambda x: process_path(x, return_image_name), num_parallel_calls=AUTOTUNE)
     train_ds = prepare_for_training(train_ds)
 
-    test_ds = test_ds.map(process_path, return_image_name=return_image_name, num_parallel_calls=AUTOTUNE)
+    test_ds = test_ds.map(lambda x: process_path(x, return_image_name), num_parallel_calls=AUTOTUNE)
     test_ds = prepare_for_training(test_ds)
     return train_ds, test_ds
 

@@ -13,14 +13,25 @@ CAP_PROP_POS_MSEC = 0
 def get_all_video_names():
     """A function to define a set of videos associated
     with an entity and assigned to a categor
+    Returns:
+        dict : a dict with the labels, entities and video urls
     """
-    indoor_videos = {"room": ["https://www.youtube.com/watch?v=N9a9abjsqbE"],
-                     "BedRoom": ["https://www.youtube.com/watch?v=hFmXTgqJ98Q"],
-                     "Restaurant": ["https://www.youtube.com/watch?v=pGCTn_UdTxI"],
-                     "bathroom": ["https://www.youtube.com/watch?v=kiyaIyuF47Q"]}
+    indoor_videos = {"room": ["https://www.youtube.com/watch?v=N9a9abjsqbE",
+                              "https://www.youtube.com/watch?v=dmxbVa8mZlY",
+                              "https://www.youtube.com/watch?v=20BPIbSO72M"],
+                     "BedRoom": ["https://www.youtube.com/watch?v=hFmXTgqJ98Q",
+                                 "https://www.youtube.com/watch?v=Yc_RwaVrZEk",
+                                 "https://www.youtube.com/watch?v=yOx0cD7pXQM"],
+                     "Restaurant": ["https://www.youtube.com/watch?v=pGCTn_UdTxI",
+                                    "https://www.youtube.com/watch?v=JjsM2DeyyZM",
+                                    "https://www.youtube.com/watch?v=NkGKRN9yoeM"],
+                     "bathroom": ["https://www.youtube.com/watch?v=kiyaIyuF47Q",
+                                  "https://www.youtube.com/watch?v=dMfZE6XWK1k",
+                                  "https://www.youtube.com/watch?v=pgmVSPbxeGw"]}
 
     outdoor_videos = {"oceans": ["https://www.youtube.com/watch?v=9ntinpHGlec",
-                              "https://www.youtube.com/watch?v=IYePs7Q-se8"],
+                              "https://www.youtube.com/watch?v=IYePs7Q-se8",
+                                 "https://www.youtube.com/watch?v=2V3DGJGOalo"],
                    "mountains": ["https://www.youtube.com/watch?v=o1-TOwCaKBQ",
                                  "https://www.youtube.com/watch?v=2SaOEUZQ2G8"],
                    "building": ["https://www.youtube.com/watch?v=TDOU34ThXeY"],
@@ -54,8 +65,7 @@ def download_video(all_videos, videos_path):
                 ctr += 1
 
 
-def download_all_videos(video_path):
-    all_video_names = get_all_video_names()
+def download_all_videos(video_path, all_video_names):
     if not os.path.exists(video_path):
         os.mkdir(video_path)
     download_video(all_video_names, video_path)
@@ -75,8 +85,6 @@ def get_all_frames(filename,
     Generates:
         frame (numpy.array)
     """
-    if not os.path.exists(image_folder):
-        os.mkdir(image_folder)
     video_capture = cv2.VideoCapture()
     video_capture.open(filename)
     video_capture.set(cv2.CAP_PROP_POS_AVI_RATIO, 1)
@@ -113,18 +121,18 @@ def get_all_frames(filename,
 
 
 def get_all_images(videos_folder, image_folder):
+    """A function that retrieves frames from videos sampled at
+    a period of 2 seconds
+    Args:
+         videos_folder (str) : The folder containing all videos
+         image_folder (str) : The folder where to save the images
+    """
     all_videos = glob.glob('{}/*.mp4'.format(videos_folder))
+    if not os.path.exists(image_folder):
+        os.mkdir(image_folder)
     for video in all_videos:
         for i, frame in enumerate(get_all_frames(video,
-                                                 sample_period=5.0,
+                                                 sample_period=2.0,
                                                  image_folder=image_folder)):
             if i % 30 == 0:
                 print("Done with video {} and frame number {}".format(video, i))
-
-
-if __name__ == "__main__":
-    get_all_images()
-    # download_all_videos()
-    # for i, frame in enumerate(get_all_frames("TBNRfrags Final Goodbye Apartment Tour.mp4")):
-    #     if i % 30 == 0:
-    #         print("Shape of frame {}".format(frame.shape))
